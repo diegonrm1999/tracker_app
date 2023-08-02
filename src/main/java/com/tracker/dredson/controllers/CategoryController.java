@@ -13,6 +13,6 @@ public class CategoryController {
 
     @GetMapping("")
     public String getCategories(){
-        return "Soon";
+        return "Soon im";
     }
 }
