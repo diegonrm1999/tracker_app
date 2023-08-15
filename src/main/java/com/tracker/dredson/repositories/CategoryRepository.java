@@ -1,5 +1,9 @@
 package com.tracker.dredson.repositories;
 
-public interface CategoryRepository {
-    
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.tracker.dredson.models.Category;
+
+
+public interface CategoryRepository extends MongoRepository<Category, String> {
 }
