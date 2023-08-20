@@ -14,6 +14,7 @@ import lombok.Setter;
 public class Exercise extends BaseModel {
     private String name;
     private String categoryId;
+    private String categoryName;
     private String imageUrl;
     private String description;
 }
