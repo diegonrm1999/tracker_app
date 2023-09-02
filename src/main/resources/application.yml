@@ -1,5 +1,0 @@
-spring:
-    data:
-        mongodb:
-            uri: mongodb+srv://diegonrm1999:2sShfr7R3vs78se@cluster0.yl9krbb.mongodb.net/?retryWrites=true&w=majority
-            database: Tracker
