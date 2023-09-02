@@ -4,6 +4,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.tracker.dredson.models.User;
 
-public interface UserRepository extends MongoRepository<String, User>{
+public interface UserRepository extends MongoRepository<User, String>{
     
 }
