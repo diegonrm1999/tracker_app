@@ -11,26 +11,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tracker.dredson.models.Routine;
-import com.tracker.dredson.services.RoutineService;
+import com.tracker.dredson.models.TrackerRoutine;
+import com.tracker.dredson.services.TrackerRoutineService;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/api/routine")
 @RequiredArgsConstructor
+@RequestMapping("/api/tracker")
 @RestController
-public class RoutineController {
+public class TrackerRoutineController {
     @Autowired
-    RoutineService routineService;
-
-    @GetMapping("/date/{timestamp}")
-    public List<Routine> getAllRoutinesByDate(@PathVariable("timestamp") long timestamp) {
-        return routineService.getAllRoutinesByDate(timestamp);
-    }
+    TrackerRoutineService trackerRoutineService;
 
     @PostMapping("")
-    public Routine saveRoutine(@RequestBody Routine routine) throws Exception {
-        return routineService.saveRoutine(routine);
+    public TrackerRoutine save(@RequestBody TrackerRoutine trackerRoutine) {
+        return trackerRoutineService.saveTrackerRoutine(trackerRoutine);
+    }
+
+    @GetMapping("/{routineId}")
+    public List<TrackerRoutine> getAllTracksByRoutineId(@PathVariable String routineId) {
+        return trackerRoutineService.getAllTracksByRoutineId(routineId);
     }
 }

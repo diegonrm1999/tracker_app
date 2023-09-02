@@ -2,10 +2,8 @@ package com.tracker.dredson.services;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,11 +23,14 @@ public class RoutineService {
     @Autowired
     ExerciseRepository exerciseRepository;
 
-    public List<Routine> getAllRoutinesByDate() {
-        ZonedDateTime today = ZonedDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT, ZoneId.systemDefault());
-        ZonedDateTime tomorrow = today.plusDays(1);
-        Long startOfDayMillis = today.toInstant().toEpochMilli();
-        Long endOfDayMillis = tomorrow.toInstant().toEpochMilli();
+    public List<Routine> getAllRoutinesByDate(long timestamp) {
+        Instant instant = Instant.ofEpochMilli(timestamp);
+        ZoneId zoneId = ZoneId.systemDefault(); 
+        ZonedDateTime startDate = instant.atZone(zoneId);
+        ZonedDateTime endDate = startDate.plusDays(1);
+
+        Long startOfDayMillis = startDate.toInstant().toEpochMilli();
+        Long endOfDayMillis = endDate.toInstant().toEpochMilli();
 
         return routineRepository.findByTimestampBetween(startOfDayMillis, endOfDayMillis);
     }
@@ -39,8 +40,6 @@ public class RoutineService {
             throw new Exception("Exercise ID is empty");
         }
         Optional<Exercise> exercise = exerciseRepository.findById(routine.getExerciseId());
-        Long currentTimestamp = Instant.now().toEpochMilli();
-        routine.setDateScheduled(currentTimestamp);
         if (exercise.isPresent()) {
             routine.setExerciseName(exercise.get().getName());
         }
