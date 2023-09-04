@@ -11,19 +11,31 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tracker.dredson.Authentication.IAuthenticationFacade;
 import com.tracker.dredson.models.Exercise;
 import com.tracker.dredson.models.Routine;
+import com.tracker.dredson.models.User;
+import com.tracker.dredson.models.common.ExceptionResponse;
 import com.tracker.dredson.repositories.ExerciseRepository;
 import com.tracker.dredson.repositories.RoutineRepository;
+import com.tracker.dredson.repositories.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class RoutineService {
-    @Autowired
-    RoutineRepository routineRepository;
-    @Autowired
-    ExerciseRepository exerciseRepository;
+    private final RoutineRepository routineRepository;
+    private final ExerciseRepository exerciseRepository;
+    private final IAuthenticationFacade authenticationFacade;
+    private final UserRepository userRepository;
+
 
     public List<Routine> getAllRoutinesByDate(long timestamp) {
+
+        String username = authenticationFacade.getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+
         Instant instant = Instant.ofEpochMilli(timestamp);
         ZoneId zoneId = ZoneId.systemDefault(); 
         ZonedDateTime startDate = instant.atZone(zoneId);
@@ -32,10 +44,13 @@ public class RoutineService {
         Long startOfDayMillis = startDate.toInstant().toEpochMilli();
         Long endOfDayMillis = endDate.toInstant().toEpochMilli();
 
-        return routineRepository.findByTimestampBetween(startOfDayMillis, endOfDayMillis);
+        return routineRepository.findByTimestampBetweenAndUserId(startOfDayMillis, endOfDayMillis, user.getId());
     }
 
     public Routine saveRoutine(Routine routine) throws Exception {
+        String username = authenticationFacade.getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+
         if (routine.getExerciseId() == null) {
             throw new Exception("Exercise ID is empty");
         }
@@ -43,6 +58,7 @@ public class RoutineService {
         if (exercise.isPresent()) {
             routine.setExerciseName(exercise.get().getName());
         }
+        routine.setUserId(user.getId());
         return routineRepository.save(routine);
     }
 }
